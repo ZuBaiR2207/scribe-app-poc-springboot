@@ -1,15 +1,57 @@
 <!doctype html>
 <html>
 
+<head>
+    <meta charset="utf-8" />
+    <title>Wellness Scribe</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        #live {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 180px;
+            white-space: pre-wrap;
+        }
+
+        #partial {
+            color: #888;
+        }
+
+        button {
+            padding: .6rem 1.2rem;
+            margin-right: .5rem;
+        }
+    </style>
+</head>
+
 <body>
     <h1>Wellness Scribe</h1>
-    <p id="status">Connecting...</p>
-    <script>
-        const ws = new WebSocket(`ws://${location.host}/stream`);
-        ws.onmessage = (e) => {
-            document.getElementById("status").textContent = "Server says: " + e.data;
-        };
-    </script>
+    <p>
+        <label>Language:
+            <select id="lang">
+                <option value="cmn_en_ms_ta">English + Mandarin + Malay + Tamil (mixed)</option>
+                <option value="en_ms">English + Malay</option>
+                <option value="cmn_en">English + Mandarin</option>
+                <option value="en_ta">English + Tamil</option>
+                <option value="en">English only</option>
+                <option value="ms">Malay only</option>
+            </select>
+        </label>
+    </p>
+    <p>
+        <button id="start">Start</button>
+        <button id="stop" disabled>Stop</button>
+        <span id="status">Idle</span>
+    </p>
+    <div id="live"><span id="final"></span><span id="partial"></span></div>
+    <script src="app.js"></script>
 </body>
 
 </html>

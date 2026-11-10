@@ -28,6 +28,7 @@ replay_pid*
 
 .env
 application-local.properties
+**/application.properties
 uploads/
 *.wav
 *.mp3
