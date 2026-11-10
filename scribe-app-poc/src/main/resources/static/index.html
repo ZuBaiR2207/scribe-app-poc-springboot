@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+
+<body>
+    <h1>Wellness Scribe</h1>
+    <p id="status">Connecting...</p>
+    <script>
+        const ws = new WebSocket(`ws://${location.host}/stream`);
+        ws.onmessage = (e) => {
+            document.getElementById("status").textContent = "Server says: " + e.data;
+        };
+    </script>
+</body>
+
+</html>
