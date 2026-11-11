@@ -1,61 +1,316 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wellness Scribe</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --success-hover: #15803d;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 800px;
-            margin: 2rem auto;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            max-width: 900px;
+            margin: 1.5rem auto;
             padding: 0 1rem;
+            line-height: 1.5;
         }
 
-        #live {
-            border: 1px solid #ccc;
+        .poc-banner {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        header {
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            margin: 0 0 0.3rem 0;
+            font-size: 1.8rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem;
-            min-height: 180px;
-            white-space: pre-wrap;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        #partial {
-            color: #888;
+        .consent-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .consent-box input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
         }
 
         button {
-            padding: .6rem 1.2rem;
-            margin-right: .5rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:not(:disabled):hover { background: var(--primary-hover); }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:not(:disabled):hover { background: var(--success-hover); }
+
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:not(:disabled):hover { background: var(--danger-hover); }
+
+        .btn-secondary { background: #64748b; color: white; }
+        .btn-secondary:not(:disabled):hover { background: #475569; }
+
+        #status {
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        #live {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #ffffff;
+            padding: 1rem;
+            min-height: 120px;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+        }
+
+        #partial {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .ai-draft-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            font-size: 0.92rem;
+            white-space: pre-wrap;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .banner {
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+        }
+
+        .banner.approved { background: #dcfce7; color: #166534; }
+        .banner.drafted { background: #e0f2fe; color: #0369a1; }
+        .banner.transcribed { background: #fef3c7; color: #92400e; }
+
+        .session-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .session-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            border-radius: 6px;
+            transition: background 0.15s ease;
+        }
+
+        .session-item:hover {
+            background: #f1f5f9;
+        }
+
+        .session-item.active {
+            background: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .session-info {
+            flex-grow: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .status-transcribed { background: #fef3c7; color: #92400e; }
+        .status-drafted { background: #e0f2fe; color: #0369a1; }
+        .status-approved { background: #dcfce7; color: #166534; }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        .empty-list {
+            color: var(--text-muted);
+            font-style: italic;
         }
     </style>
 </head>
 
 <body>
-    <h1>Wellness Scribe</h1>
-    <p>
-        <label>Language:
-            <select id="lang">
-                <option value="cmn_en_ms_ta">English +Mendarin + Malay + Tamil (mixed)</option>
+
+    <div class="poc-banner">
+        ⚠️ <strong>POC, test data only:</strong> Do not enter real patient identifying information. Session notes are stored locally in H2 for demonstration purposes.
+    </div>
+
+    <header>
+        <h1>🌿 Wellness Scribe</h1>
+        <p style="margin: 0; color: var(--text-muted);">Real-time multilingual consultation transcription & structured documentation</p>
+    </header>
+
+    <!-- RECORDING CARD -->
+    <div class="card">
+        <div class="consent-box">
+            <input type="checkbox" id="consentCheckbox" />
+            <label for="consentCheckbox">
+                <strong>Practitioner Consent Gate:</strong> I confirm the client has provided consent for session audio processing.
+            </label>
+        </div>
+
+        <div class="controls-row">
+            <label for="lang"><strong>Language:</strong></label>
+            <select id="lang" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
+                <option value="en">English only</option>
+                <option value="cmn_en_ms_ta">English + Mandarin + Malay + Tamil (mixed)</option>
                 <option value="en_ms">English + Malay</option>
-                <option value="bn">Bengali only</option>
                 <option value="cmn_en">English + Mandarin</option>
                 <option value="en_ta">English + Tamil</option>
-                <option value="en">English only</option>
+                <option value="bn">Bengali (বাংলা)</option>
                 <option value="ms">Malay only</option>
             </select>
+
+            <button id="start" class="btn-primary" disabled>▶ Start Session</button>
+            <button id="stop" class="btn-danger" disabled>⏹ Stop</button>
+            <span id="status">Please confirm practitioner consent</span>
+        </div>
+
+        <h3 style="margin: 1rem 0 0.5rem 0; font-size: 1rem;">Live Consultation Transcript</h3>
+        <div id="live"><span id="final"></span><span id="partial"></span></div>
+    </div>
+
+    <!-- DOCUMENTATION & APPROVAL CARD -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2 style="margin: 0; font-size: 1.3rem;">Wellness Documentation</h2>
+            <div id="statusBanner" class="banner"></div>
+        </div>
+
+        <!-- Separate immutable AI Draft section -->
+        <div id="aiDraftContainer" style="display: none;">
+            <strong style="color: var(--primary); font-size: 0.9rem;">Original AI Draft (Reference):</strong>
+            <div id="aiDraftText" class="ai-draft-box"></div>
+        </div>
+
+        <label for="note" style="display: block; margin-bottom: 0.4rem; font-weight: 500;">
+            Practitioner Note (Review & Edit):
         </label>
-    </p>
-    <p>
-        <button id="start">Start</button>
-        <button id="stop" disabled>Stop</button>
-        <span id="status">Idle</span>
-    </p>
-    <div id="live"><span id="final"></span><span id="partial"></span></div>
-    <h2>Wellness note</h2>
-    <textarea id="note" rows="14" style="width:100%"
-        placeholder="The note appears here after you press Stop."></textarea>
-    <script src="app.js"></script>
+        <textarea id="note" rows="12" placeholder="The structured note will appear here after stopping the recording or when opening a past session."></textarea>
+
+        <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+            <button id="approveBtn" class="btn-success" disabled>✓ Approve & Lock Note</button>
+            <button id="retryDraftBtn" class="btn-secondary" disabled>🔄 Regenerate Draft</button>
+        </div>
+    </div>
+
+    <!-- PAST SESSIONS CARD -->
+    <div class="card">
+        <h2 style="margin: 0 0 1rem 0; font-size: 1.3rem;">Past Sessions</h2>
+        <div id="sessionsListContainer">
+            <p class="empty-list">Loading sessions...</p>
+        </div>
+    </div>
+
+    <!-- ES Module Main Entry Point -->
+    <script type="module" src="js/main.js"></script>
+
 </body>
 
 </html>
